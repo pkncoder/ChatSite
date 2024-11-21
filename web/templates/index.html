@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}Chat App{% endblock %}
+
+{% block head %}
+<script src="https://cdn.socket.io/4.8.0/socket.io.min.js" integrity="sha384-OoIbkvzsFFQAG88r+IqMAjyOtYDPGO0cqK5HF5Uosdy/zUEGySeAzytENMDynREd" crossorigin="anonymous"></script>
+
+{% if userID == "1" %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/indexAdmin.css') }}">
+
+{% else %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block body %}<body class="p-0 d-flex" data-bs-theme="dark">{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column flex-shrink-0" style="width: 4.5rem;">
+    <div class="dropdown border-top mt-auto">
+        <a href="/" class="d-flex gap-2 align-items-center justify-content-center p-3 link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+            <img src="{{ url_for('static', filename='assets/logo.png') }}" width="36" height="36" class="rounded-circle">
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+            <li><span class="dropdown-item">Settings</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/signOut">Sign out</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="container-fluid d-flex align-items-start flex-column p-2 top" id="messagesTop" style="overflow-y: scroll;">
+    <div class="container-fluid p-2 w-100">
+        <div class="container-fluid text-start d-flex flex-column-reverse h-100 w-100 m-0 align-items-center" id="messagesContainer">
+            
+        </div>
+    </div>
+
+    <div class="container-fluid mt-auto p-2 w-100">
+        <form action="/sendMessage" method="post" onsubmit="ping()">
+            <input name="message" type="text" class="form-control message-input" placeholder="Send a message" autocomplete="off" maxlength="100" required>
+            <input type="hidden" name="userID" value="{{ userID }}">
+        </form>
+    </div>
+</div>
+{% endblock %}

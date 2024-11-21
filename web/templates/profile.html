@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}<body class="p-0 d-flex" data-bs-theme="dark">{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column flex-shrink-0 vh-100" style="width: 4.5rem;">
+    <div class="dropdown border-top mt-auto">
+        <a href="/" class="d-flex gap-2 align-items-center justify-content-center p-3 link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+            <img src="{{ url_for('static', filename='assets/logo.png') }}" width="36" height="36" class="rounded-circle">
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+            <li><span class="dropdown-item">Settings</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/signOut">Sign out</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="top row container-fluid">
+    <div class="col-7 p-5">
+        <div class="container rounded-5 h-100 bg-darklighter p-5 d-flex flex-column">
+            
+            <h1>Edit your profile</h1>
+
+            <div class="containerr flex-grow-1">
+                <form action="/changeUserAccount" method="post" class="d-flex flex-column container p-4 gap-3 h-100">
+                    
+                    <label for="username" class="h3 text-start ps-3">Username</label>
+                    <input name="username" type="text" class="form-control" value="{{ userData[1] }}">
+
+                    <input type="hidden" name="userID" value="{{ userData[0] }}">
+
+                    <label for="password" class="h3 text-start ps-3">Password</label>
+                    <input name="password" type="text" class="form-control" value="{{ userData[2] }}">
+
+                    <label for="color" class="h3 text-start ps-3">Color</label>
+                    <input name="color" type="color" class="form-control" value="{{ userData[3] }}">
+
+                    <button class="btn btn-primary btn-sm mt-auto" type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-5 p-3">
+        <div class="container rounded-5 h-100 bg-darklighter">
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

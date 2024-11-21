@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container-fluid top p-3 vh-100 text-center">
+    <div class="container d-flex align-items-center justify-content-center h-100">
+        <div class="card shadow-lg">
+            <div class="card-header py-4">
+                <span class="h3">Login to Chat App</span>
+            </div>
+            <div class="card-body">
+
+                <form class="d-flex flex-column gap-4" action="/auth", method="post">
+
+                    <div>
+                        <div class="form-floating">
+                            <input name="userUsername" type="text" class="form-control rounded-bottom-0" placeholder="username">
+                            <label>Username</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <input name="userPassword" type="text" class="form-control rounded-top-0" placeholder="password">
+                            <label>Password</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg btn-primary">Login</button>
+
+                </form>
+            </div>
+            <div class="card-footer">
+                <span>Made by Kia Preston</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
