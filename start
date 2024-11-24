@@ -1,4 +1,0 @@
-#!/bin/bash
-
-PYTHON_VENV_PATH=$(which python)
-sudo $PYTHON_VENV_PATH frontEnd.py

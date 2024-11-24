@@ -247,4 +247,4 @@ if __name__ == '__main__':
     
     # app.run(debug=True)
     # app.run(host="0.0.0.0", port=5000, debug=True)
-    socket.run(app, host='0.0.0.0', debug=True, port=80)
+    socket.run(app, host='0.0.0.0', debug=True, port=5000)
