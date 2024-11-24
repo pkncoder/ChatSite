@@ -145,7 +145,7 @@ def delete_user(user_id) -> Response:
     c.execute('DELETE FROM users WHERE id = ?', (user_id,))
     conn.commit()
     conn.close()
-    return redirect(url_for('index'))
+    return redirect(url_for('users'))
 
 
 
@@ -247,4 +247,4 @@ if __name__ == '__main__':
     
     # app.run(debug=True)
     # app.run(host="0.0.0.0", port=5000, debug=True)
-    socket.run(app, host='0.0.0.0', debug=True)
+    socket.run(app, host='0.0.0.0', debug=True, port=80)

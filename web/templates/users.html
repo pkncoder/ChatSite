@@ -53,6 +53,7 @@
                         <th scope="col">Username</th>
                         <th scope="col">Password</th>
                         <th scope="col">Favorite Color</th>
+                        <th scope="col">Remove</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,6 +63,7 @@
                             <td>{{ user[1] }}</td>
                             <td id="passwordValue{{ user[0] }}"><button onclick="showValue({{ user[0] }}, '{{ user[2] }}')">Show?</button></td>
                             <td><span style="position: absolute; width: 20px; height: 20px; background-color: {{ user[3] }};"></span></td>
+                            <td><a href="/removeUser/{{ user[0] }}">Remove</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

@@ -47,7 +47,7 @@
 
     <div class="container-fluid mt-auto p-2 w-100">
         <form action="/sendMessage" method="post" onsubmit="ping()">
-            <input name="message" type="text" class="form-control message-input" placeholder="Send a message" autocomplete="off" maxlength="100" required>
+            <input name="message" type="text" class="form-control message-input" placeholder="Send a message" autocomplete="off" maxlength="300" required>
             <input type="hidden" name="userID" value="{{ userID }}">
         </form>
     </div>
