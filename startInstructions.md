@@ -1,7 +1,8 @@
 To develop... 
 
 ```
-python manage.py run -h 0.0.0.0 -p 5000 --debug
+export FLASK_APP=frontEnd:app
+python manage.py run -h 0.0.0.0 -p 5001 --debug
 ```
 
 

@@ -16,7 +16,7 @@ $(document).ready(function() {
 socket.on('update messages', function(msg){
     // Wait 2 seconds so the db can prossess the data
     // TODO: See if this can be made better
-    sleep(2000).then(() => { setDoc(); });
+    sleep(10000).then(() => { setDoc(); });
 })
 
 // Send an event to the server that a message was sent
@@ -57,52 +57,71 @@ function setDoc() {
 // Deals with all the messages
 function dealWithMessages(response) {
 
-    // If there aren't any new messages
-    if (($(".messageBox").length <= 0) || (parseInt(response[response.length - 1][0]) !== parseInt($(".messageBox")[$(".messageBox").length - 1].id))) {
+    // Get the messageContainer and reset the inside
+    const messageContainer = $("#messagesContainer");
+    messageContainer[0].innerHTML = "";
 
-        // Get the messageContainer and reset the inside
-        const messageContainer = $("#messagesContainer");
-        messageContainer[0].innerHTML = "";
+    // Loop every message in the response
+    for (let messageIndex = 0; messageIndex < response.length; messageIndex++) {
 
-        // Loop every message in the response
-        for (let messageIndex = 0; messageIndex < response.length; messageIndex++) {
-            
-            // Make a message div that is just html with the data from the message inside using the raw string
-            const messageDiv = `
-            <div class="container-fluid d-flex align-items-center gap-0 p-2 messageBox" id="${response[messageIndex][0]}">
-                <div class="flex-grow-1" style="text-wrap: wrap;">
-                    <div>
-                        <span style="color: ${response[messageIndex][3]}" >${response[messageIndex][2]}</span>
-                        <span style="color: grey">${response[messageIndex][4]}</span>
-                    </div>
-                    <p class="h4" style="color: ${response[messageIndex][3]}">${response[messageIndex][1]}</p>
+        console.log(response[messageIndex])
+        
+        // Make a message div that is just html with the data from the message inside using the raw string
+        let messageDiv = `
+        <div class="container-fluid d-flex align-items-center gap-3 p-2 messageBox" id="${response[messageIndex][0]}">
+            <div class="flex-grow-1" style="text-wrap: wrap;">
+                <div>
+                    <span style="color: ${response[messageIndex][4]}">${response[messageIndex][3]}</span>
+                    <span style="color: grey">${response[messageIndex][2]}</span>
                 </div>
-                <div class="delete">
-                    <a href="/removeMessage/${response[messageIndex][0]}"><i class="fa fa-trash-o" style="font-size:48px;color:red"></i></a>
-                </div>
+                <p class="h4" style="color: ${response[messageIndex][4]}">${response[messageIndex][1]}</p>
             </div>
-            `;
+        `;
 
-            // Append the message to the message div
-            messageContainer.append(messageDiv);
+        if (response[messageIndex][5] == getCookie("userID")) {
+            messageDiv += `<div class="rename" id="${response[messageIndex[0]]}">
+                <button class="btn" onclick="editMessage('${response[messageIndex][0]}')"><i class="fa fa-refresh" style="font-size:48px;color:light-blue"></i></button>
+            </div>`
         }
 
-        // Append a new button to the div to show more messages
-        messageContainer.append(`<button id="moreMessagesButton" class="btn btn-sm btn-primary mb-2" style="width: 20%" onclick="moreMessages()">MORE MESSAGES</button>`);
-
-        // If adding more is useless, then don't add anymore
-        if (limitNum > $(".messageBox").length) {
-
-            // Stop sending more requests by making the button disabled
-            $("#moreMessagesButton")[0].className += " disabled";
+        if (getCookie("userID") == "1" || response[messageIndex][5] == getCookie("userID")) {
+            messageDiv += `<div class="delete">
+                <form action="/removeMessage/${response[messageIndex][0]}" method="get" onsubmit="ping()">
+                    <button class="btn"><i class="fa fa-trash-o" style="font-size:48px;color:red"></i></button>
+                </form>
+            </div>`
         }
 
-        // If anything was changed, then return true
-        return true;
+        messageDiv += "</div>"
+
+        // Append the message to the message div
+        messageContainer.append(messageDiv);
     }
 
-    // If nothing was changed, return false
-    return false;
+    // Append a new button to the div to show more messages
+    messageContainer.append(`<button id="moreMessagesButton" class="btn btn-sm btn-primary mb-2" style="width: 20%" onclick="moreMessages()">MORE MESSAGES</button>`);
+
+    // If adding more is useless, then don't add anymore
+    if (limitNum > $(".messageBox").length) {
+
+        // Stop sending more requests by making the button disabled
+        $("#moreMessagesButton")[0].className += " disabled";
+    }
+
+    // If anything was changed, then return true
+    return true;
+}
+
+function editMessage(messageID) {
+    console.log("messageID")
+
+    div = $("#" + messageID)[0]
+
+    div.innerHTML = `
+    <form action="/editMessage/${messageID}" method="post" class="container w-100" onsubmit="ping()">
+        <input class="form-control" name="text" type="text" placeholder="new text" required>
+    </form>
+    `
 }
 
 // Increase the message limit num and re-set the doc
@@ -114,4 +133,21 @@ function moreMessages() {
 // Sleep function
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// W3schools
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
 }

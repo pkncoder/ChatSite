@@ -5,8 +5,6 @@ import sqlite3
 import json
 import datetime
 
-from database import Databases
-
 
 """
 VARS
@@ -55,7 +53,7 @@ def index() -> Response:
 @app.route("/users")
 def users() -> Response:
     if request.cookies.get('userID') == "1":
-        conn = sqlite3.connect('databases/users.db')
+        conn = sqlite3.connect('databases/database.db')
         c = conn.cursor()
         c.execute('SELECT * FROM users')
         users = c.fetchall()
@@ -76,9 +74,9 @@ def profile() -> Response:
 
     if userID:
 
-        conn = sqlite3.connect('databases/users.db')
+        conn = sqlite3.connect('databases/database.db')
         c = conn.cursor()
-        c.execute('SELECT * FROM users WHERE id = ?', (userID,))
+        c.execute('SELECT * FROM users WHERE userID = ?', (userID,))
         userData = c.fetchall()
         conn.close()
 
@@ -94,19 +92,13 @@ def sendMessage() -> Response:
     message = request.form['message']
     userID = request.form['userID']
     
-    conn = sqlite3.connect('databases/users.db')
+    conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM users WHERE id = ?', (userID,))
-    data = c.fetchall()
-    conn.close()
 
-    username = data[0][1]
-    color = data[0][3]
     time = datetime.datetime.now()
 
-    conn = sqlite3.connect('databases/messages.db')
-    c = conn.cursor()
-    c.execute('INSERT INTO messages (message, username, color, timeSent) VALUES (?, ?, ?, ?)', (message, username, color, time))
+    c.execute('INSERT INTO messages (message, userID, timeSent) VALUES (?, ?, ?)', (message, userID, time,))
+
     conn.commit()
     conn.close()
 
@@ -114,9 +106,9 @@ def sendMessage() -> Response:
 
 @app.route('/removeMessage/<int:message_id>')
 def delete_message(message_id) -> Response:
-    conn = sqlite3.connect('databases/messages.db')
+    conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute('DELETE FROM messages WHERE id = ?', (message_id,))
+    c.execute('DELETE FROM messages WHERE messageID = ?', (message_id,))
     conn.commit()
     conn.close()
     return redirect(url_for('index'))
@@ -130,7 +122,7 @@ def addUser() -> Response:
     password = request.form["password"]
     favoriteColor = request.form["favoriteColor"]
 
-    conn = sqlite3.connect('databases/users.db')
+    conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
     c.execute("INSERT INTO users (username, password, favoriteColor) VALUES (?, ?, ?)", (username, password, favoriteColor))
     conn.commit()
@@ -140,9 +132,9 @@ def addUser() -> Response:
 
 @app.route('/removeUser/<int:user_id>')
 def delete_user(user_id) -> Response:
-    conn = sqlite3.connect('databases/users.db')
+    conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute('DELETE FROM users WHERE id = ?', (user_id,))
+    c.execute('DELETE FROM users WHERE userID = ?', (user_id,))
     conn.commit()
     conn.close()
     return redirect(url_for('users'))
@@ -158,9 +150,9 @@ def checkAuth() -> Response:
     password = request.form['userPassword']
 
     # Connect to the users database and get all the users from it (id,name,pass)
-    conn = sqlite3.connect('databases/users.db')
+    conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute("SELECT id, username, password FROM users")
+    c.execute("SELECT userID, username, password FROM users")
     data = c.fetchall()
     conn.close()
     
@@ -194,11 +186,11 @@ def signOut() -> Response:
 def getMessages() -> str:
     
     # Connect to the database 
-    conn = sqlite3.connect('databases/messages.db')
+    conn = sqlite3.connect('databases/database.db')
 
     # Get the last messages sent, but only a spesific amount specified by request args
     c = conn.cursor()
-    c.execute('SELECT * FROM messages ORDER BY id DESC LIMIT ?', (request.args.get("limitNum"),))
+    c.execute('SELECT messageID, message, timeSent, username, color, messages.userID FROM messages INNER JOIN users on messages.userID = users.userID ORDER BY messageID DESC LIMIT ?', (request.args.get("limitNum"),))
 
     # Get a list of all the messages then close the database
     messages = c.fetchall()
@@ -233,18 +225,25 @@ def changeUserAccount() -> Response:
     color = request.form['color']
 
     # Connect to the users database and get all the users from it (id,name,pass)
-    conn = sqlite3.connect('databases/users.db')
+    conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute("UPDATE users SET id = ?, username = ?, password = ?, favoriteColor = ? WHERE id = ?", (userID, username, password, color, userID,))
+    c.execute("UPDATE users SET userID = ?, username = ?, password = ?, color = ? WHERE userID = ?", (userID, username, password, color, userID,))
     conn.commit()
     conn.close()
 
     return redirect(url_for("index"))
 
-if __name__ == '__main__':
-    Databases()
+@app.route('/editMessage/<int:message_id>', methods=["POST"])
+def edit_message(message_id) -> Response:
 
-    
-    # app.run(debug=True)
-    # app.run(host="0.0.0.0", port=5000, debug=True)
+    text = request.form["text"]
+
+    conn = sqlite3.connect('databases/database.db')
+    c = conn.cursor()
+    c.execute('UPDATE messages SET message = ? WHERE messageID = ?', (text, message_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', debug=True, port=5000)

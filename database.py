@@ -1,38 +1,35 @@
 import sqlite3
 
-class Databases:
-
-    def __init__(self):
-        createMessagesDatabase()
-        createUsersDatabase()
-
-def createMessagesDatabase():
-
-    conn = sqlite3.connect(f'databases/messages.db')
+def createDatabase():
+    conn = sqlite3.connect(f'databases/database.db')
     c = conn.cursor()
     c.execute(
         '''CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY, 
+            messageID INTEGER PRIMARY KEY, 
             message TEXT, 
-            username TEXT,
-            color TEXT,
+            userID INTEGER,
             timeSent TEXT
+        )
+        ''')
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS users (
+            userID INTEGER PRIMARY KEY, 
+            usernamme TEXT, 
+            password TEXT,
+            color TEXT
         )
         ''')
     conn.commit()
     conn.close()
 
-def createUsersDatabase():
-
-    conn = sqlite3.connect(f'databases/users.db')
+def runCommand(command):
+    conn = sqlite3.connect(f'databases/database.db')
     c = conn.cursor()
-    c.execute(
-        """CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
-            username TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            favoriteColor TEXT NOT NULL
-        )
-        """)
+    c.execute(command)
     conn.commit()
     conn.close()
+
+
+if __name__ == "__main__":
+    runCommand("ALTER TABLE messages ADD timeSent TEXT")
+    runCommand("ALTER TABLE users RENAME COLUMN usernamme TO username")
