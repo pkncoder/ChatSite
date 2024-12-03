@@ -2,8 +2,9 @@ from flask import Flask, Response, make_response, render_template, request, redi
 from flask_socketio import SocketIO, emit
 import sqlite3
 
-import json
 import datetime
+import json
+import os
 
 
 """
@@ -124,7 +125,7 @@ def addUser() -> Response:
 
     conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute("INSERT INTO users (username, password, favoriteColor) VALUES (?, ?, ?)", (username, password, favoriteColor))
+    c.execute("INSERT INTO users (username, password, color) VALUES (?, ?, ?)", (username, password, favoriteColor))
     conn.commit()
     conn.close()
 
@@ -219,15 +220,24 @@ def setAllSiteCookies(value: str, timeout = None) -> Response:
 def changeUserAccount() -> Response:
 
     # User username and password
+    profilePictureFile = request.files['profilePicture']
+
     username = request.form['username']
     password = request.form['password']
     userID = request.form['userID']
     color = request.form['color']
 
+    newPathFull = "web/static/assets/" + username + "." + profilePictureFile.filename.split(".")[-1].lower()
+    newPathTable = "assets/" + username + "." + profilePictureFile.filename.split(".")[-1].lower()
+
+    profilePictureFile.save(newPathFull)
+
+    print(request.form['username'])
+
     # Connect to the users database and get all the users from it (id,name,pass)
     conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute("UPDATE users SET userID = ?, username = ?, password = ?, color = ? WHERE userID = ?", (userID, username, password, color, userID,))
+    c.execute("UPDATE users SET userID = ?, username = ?, password = ?, color = ?, imagePath = ? WHERE userID = ?", (userID, username, password, color, newPathTable, userID,))
     conn.commit()
     conn.close()
 

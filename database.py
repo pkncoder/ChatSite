@@ -31,5 +31,8 @@ def runCommand(command):
 
 
 if __name__ == "__main__":
-    runCommand("ALTER TABLE messages ADD timeSent TEXT")
-    runCommand("ALTER TABLE users RENAME COLUMN usernamme TO username")
+    conn = sqlite3.connect(f'databases/database.db')
+    c = conn.cursor()
+    c.execute('UPDATE users SET imagePath = ?', ('assets/logo.png',))
+    conn.commit()
+    conn.close()

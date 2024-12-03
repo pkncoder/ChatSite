@@ -16,7 +16,7 @@ $(document).ready(function() {
 socket.on('update messages', function(msg){
     // Wait 2 seconds so the db can prossess the data
     // TODO: See if this can be made better
-    sleep(10000).then(() => { setDoc(); });
+    sleep(3000).then(() => { setDoc(); });
 })
 
 // Send an event to the server that a message was sent
