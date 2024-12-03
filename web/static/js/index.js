@@ -69,12 +69,13 @@ function dealWithMessages(response) {
         // Make a message div that is just html with the data from the message inside using the raw string
         let messageDiv = `
         <div class="container-fluid d-flex align-items-center gap-3 p-2 messageBox" id="${response[messageIndex][0]}">
+            <img src="/static/${response[messageIndex][5]}" class="rounded-circle" style="border: solid 2px {{ userData[3] }}; display: none;" width="50" height="50">
             <div class="flex-grow-1" style="text-wrap: wrap;">
                 <div>
-                    <span style="color: ${response[messageIndex][4]}">${response[messageIndex][3]}</span>
-                    <span style="color: grey">${response[messageIndex][2]}</span>
+                    <span style="color: ${response[messageIndex][4]}" class="h6">${response[messageIndex][3]}</span>
+                    <span style="color: grey" class="h6">${response[messageIndex][2]}</span>
                 </div>
-                <p class="h4" style="color: ${response[messageIndex][4]}">${response[messageIndex][1]}</p>
+                <span class="h2 h-100" style="color: ${response[messageIndex][4]}">${response[messageIndex][1]}</span>
             </div>
         `;
 

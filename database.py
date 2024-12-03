@@ -31,6 +31,8 @@ def runCommand(command):
 
 
 if __name__ == "__main__":
+    runCommand('ALTER TABLE users ADD imagePath TEXT')
+    
     conn = sqlite3.connect(f'databases/database.db')
     c = conn.cursor()
     c.execute('UPDATE users SET imagePath = ?', ('assets/logo.png',))

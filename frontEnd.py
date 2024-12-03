@@ -191,7 +191,7 @@ def getMessages() -> str:
 
     # Get the last messages sent, but only a spesific amount specified by request args
     c = conn.cursor()
-    c.execute('SELECT messageID, message, timeSent, username, color, messages.userID FROM messages INNER JOIN users on messages.userID = users.userID ORDER BY messageID DESC LIMIT ?', (request.args.get("limitNum"),))
+    c.execute('SELECT messageID, message, timeSent, username, color, imagePath, messages.userID FROM messages INNER JOIN users on messages.userID = users.userID ORDER BY messageID DESC LIMIT ?', (request.args.get("limitNum"),))
 
     # Get a list of all the messages then close the database
     messages = c.fetchall()
