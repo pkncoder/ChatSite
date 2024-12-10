@@ -64,8 +64,6 @@ function dealWithMessages(response) {
     // Loop every message in the response
     for (let messageIndex = 0; messageIndex < response.length; messageIndex++) {
 
-        console.log(response[messageIndex])
-        
         // Make a message div that is just html with the data from the message inside using the raw string
         let messageDiv = `
         <div class="container-fluid d-flex align-items-center gap-3 p-2 messageBox" id="${response[messageIndex][0]}">
@@ -79,13 +77,13 @@ function dealWithMessages(response) {
             </div>
         `;
 
-        if (response[messageIndex][5] == getCookie("userID")) {
+        if (`${response[messageIndex][6]}` === getCookie("userID")) {
             messageDiv += `<div class="rename" id="${response[messageIndex[0]]}">
                 <button class="btn" onclick="editMessage('${response[messageIndex][0]}')"><i class="fa fa-refresh" style="font-size:48px;color:light-blue"></i></button>
             </div>`
         }
 
-        if (getCookie("userID") == "1" || response[messageIndex][5] == getCookie("userID")) {
+        if (getCookie("userID") == "1" || (`${response[messageIndex][6]}` === getCookie("userID"))) {
             messageDiv += `<div class="delete">
                 <form action="/removeMessage/${response[messageIndex][0]}" method="get" onsubmit="ping()">
                     <button class="btn"><i class="fa fa-trash-o" style="font-size:48px;color:red"></i></button>
@@ -114,8 +112,6 @@ function dealWithMessages(response) {
 }
 
 function editMessage(messageID) {
-    console.log("messageID")
-
     div = $("#" + messageID)[0]
 
     div.innerHTML = `

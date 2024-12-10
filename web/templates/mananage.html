@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script src="{{ url_for('static', filename='js/user.js') }}"></script>
+{% endblock %}
+
+{% block title %}Users{% endblock %}
+
+{% block body %}<body class="p-0 d-flex" data-bs-theme="dark" style="overflow-y: scroll;">{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column flex-shrink-0" style="width: 4.5rem;">
+    <div class="dropdown border-top mt-auto">
+        <a href="/" class="d-flex gap-2 align-items-center justify-content-center p-3 link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+            <img src="{{ url_for('static', filename='assets/logo.png') }}" width="36" height="36" class="rounded-circle">
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+            <li><span class="dropdown-item">Settings</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/signOut">Sign out</a></li>
+        </ul>
+    </div>
+</div>  
+
+<div class="container-fluid d-flex p-5 top flex-column" style="overflow-y: scroll;">
+    <div class="container row pb-3">
+        <div class="col-3 addUserDiv">
+            <div class="card">
+                <div class="card-header">
+                    <p class="h3">Create Acount</p>
+                </div>
+                <div class="card-body">
+                    <form action="/addUser" method="post" class="container d-flex flex-column gap-4">
+                        <input name="username" type="text" class="form-control " placeholder="Username" autocomplete="off" required>
+                        <input name="password" type="text" class="form-control password-input" placeholder="Password" autocomplete="off" required>
+                        <input name="favoriteColor" type="color" class="form-control password-input" placeholder="Password" autocomplete="off" required>
+                        
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <p>Made by Kia Preston</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-9">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">Favorite Color</th>
+                        <th scope="col">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <th>{{ user[0] }}</th>
+                            <td>{{ user[1] }}</td>
+                            <td id="passwordValue{{ user[0] }}"><button onclick="showValue({{ user[0] }}, '{{ user[2] }}')">Show?</button></td>
+                            <td><span>{{ user[3] }}</span></td>
+                            <td><a href="/removeUser/{{ user[0] }}">Remove</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container row pb-3">
+        <div class="col-3 addUserDiv">
+            <div class="card">
+                <div class="card-header">
+                    <p class="h3">Create Chat Room</p>
+                </div>
+                <div class="card-body">
+                    <form action="/addRoom" method="post" class="container d-flex flex-column gap-4">
+                        <input name="name" type="text" class="form-control " placeholder="Room Name" autocomplete="off" required>
+                        
+                        <button type="submit" class="btn btn-primary">Add Room</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <p>Made by Kia Preston</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-9">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th scope="col">Room Name</th>
+                        <th scope="col">Room Count</th>
+                        <th scope="col">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for server in servers %}
+                        <tr>
+                            <th>{{ server[0] }}</th>
+                            <td>{{ server[1] }}</td>
+                            <td>Not Implimented</td>
+                            <td><a href="/removeRoom/{{ server[0] }}">Remove</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container row pb-3">
+        <div class="col-3 addUserDiv">
+            <div class="card">
+                <div class="card-header">
+                    <p class="h3">Add User to Rooms</p>
+                </div>
+                <div class="card-body">
+                    <form action="/addUserRoomCombo" method="post" class="container d-flex flex-column gap-4">
+                        <input name="userID" type="text" class="form-control" placeholder="User ID" autocomplete="off" required>
+                        <input name="roomID" type="number" class="form-control" placeholder="Room ID" autocomplete="off" required>
+                        <button type="submit" class="btn btn-primary">Add User to Room</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <p>Made by Kia Preston</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-9">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Room ID</th>
+                        <th scope="col">Room Name</th>
+                        <th scope="col">User Name</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for userRoomCombo in userRoomCombos %}
+                        <tr>
+                            <th>{{ userRoomCombo[0] }}</th>
+                            <td>{{ userRoomCombo[1] }}</td>
+                            <th>{{ userRoomCombo[2] }}</th>
+                            <td>{{ userRoomCombo[3] }}</td>
+                            <td><a href="/removeUserRoomCombo/{{ userRoomCombo[0] }}/{{ userRoomCombo[3] }}">Remove</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

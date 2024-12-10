@@ -51,19 +51,79 @@ def index() -> Response:
     
     return redirect(url_for("loginSite"))
 
-@app.route("/users")
+@app.route("/mananage")
 def users() -> Response:
     if request.cookies.get('userID') == "1":
         conn = sqlite3.connect('databases/database.db')
         c = conn.cursor()
+
         c.execute('SELECT * FROM users')
         users = c.fetchall()
+
+        c.execute('SELECT * FROM chatRooms')
+        servers = c.fetchall()
+
+        c.execute('''SELECT 
+                roomUser.roomID, chatRooms.roomName, users.username, roomUser.userID
+                  FROM ((roomUser
+                  INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID)
+                  INNER JOIN users ON roomUser.userID = users.userID) 
+                '''
+        )
+        userRoomCombos = c.fetchall()
         conn.close()
 
-        return render_template("users.html", users=users)
+        return render_template("mananage.html", users=users, servers=servers, userRoomCombos=userRoomCombos)
     
     else:
         return redirect(url_for("index"))
+    
+@app.route('/removeRoom/<int:room_id>')
+def delete_room(room_id) -> Response:
+    conn = sqlite3.connect('databases/database.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM chatRooms WHERE roomID = ?', (room_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('index'))
+
+
+
+@app.route("/addRoom", methods=["POST"])
+def addRoom() -> Response:
+
+    roomName = request.form["name"]
+
+    conn = sqlite3.connect('databases/database.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO chatRooms (roomName) VALUES (?)", (roomName,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('users'))
+
+@app.route('/addUserRoomCombo', methods=["POST"])
+def addUserRoomCombo():
+
+    roomID = request.form["roomID"]
+    userID = request.form["userID"]
+
+    conn = sqlite3.connect('databases/database.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO roomUser (roomID, userID) VALUES (?, ?)", (roomID, userID))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('users'))
+
+@app.route('/removeUserRoomCombo/<int:room_id>/<int:user_id>')
+def delete_room_user(room_id, user_id) -> Response:
+    conn = sqlite3.connect('databases/database.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM roomUser WHERE roomID = ? AND userID = ?', (room_id, user_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('users'))
 
 @app.route("/login")
 def loginSite() -> Response:

@@ -7,18 +7,34 @@ def createDatabase():
         '''CREATE TABLE IF NOT EXISTS messages (
             messageID INTEGER PRIMARY KEY, 
             message TEXT, 
+            timeSent TEXT,
             userID INTEGER,
-            timeSent TEXT
+            roomID INTEGER
         )
         ''')
     c.execute(
         '''CREATE TABLE IF NOT EXISTS users (
             userID INTEGER PRIMARY KEY, 
-            usernamme TEXT, 
+            username TEXT,
             password TEXT,
+            imagePath text,
             color TEXT
         )
         ''')
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS chatRooms (
+            roomID INTEGER PRIMARY KEY,
+            roomName TEXT
+        )
+        '''
+    )
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS roomUser (
+            roomID INTEGER,
+            userID INTEGER,
+            PRIMARY KEY (roomID, userID)
+        )'''
+    )
     conn.commit()
     conn.close()
 
@@ -31,10 +47,4 @@ def runCommand(command):
 
 
 if __name__ == "__main__":
-    runCommand('ALTER TABLE users ADD imagePath TEXT')
-    
-    conn = sqlite3.connect(f'databases/database.db')
-    c = conn.cursor()
-    c.execute('UPDATE users SET imagePath = ?', ('assets/logo.png',))
-    conn.commit()
-    conn.close()
+    pass
