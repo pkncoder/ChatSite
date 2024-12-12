@@ -44,10 +44,35 @@ def handle_my_custom_event(message) -> None:
 def index() -> Response:
 
     if request.cookies.get('userID'):
-        
-        return make_response(
-            render_template('index.html', userID=request.cookies.get('userID'))
+       
+
+        conn = sqlite3.connect('databases/database.db')
+        c = conn.cursor()
+
+        c.execute('''SELECT 
+                roomUser.roomID, chatRooms.roomName
+                  FROM roomUser
+                  INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID
+                  WHERE userID = ?
+                ''', (request.cookies.get('userID'),)
         )
+        serverList = c.fetchall()
+
+        c.close()
+
+        roomID = request.cookies.get('roomID')
+        
+        if not roomID:
+            roomID = 1
+            
+        finalResponse = make_response(
+            render_template('index.html', userID=request.cookies.get('userID'), serverList=serverList, roomID=roomID)
+        )
+
+        if not request.cookies.get('roomID'):
+            finalResponse.set_cookie('roomID', "1")
+
+        return finalResponse
     
     return redirect(url_for("loginSite"))
 
@@ -152,13 +177,16 @@ def sendMessage() -> Response:
 
     message = request.form['message']
     userID = request.form['userID']
+    roomID = request.form['roomID']
+
+    print(roomID)
     
     conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
 
     time = datetime.datetime.now()
 
-    c.execute('INSERT INTO messages (message, userID, timeSent) VALUES (?, ?, ?)', (message, userID, time,))
+    c.execute('INSERT INTO messages (message, userID, timeSent, roomID) VALUES (?, ?, ?, ?)', (message, userID, time, roomID,))
 
     conn.commit()
     conn.close()
@@ -243,15 +271,15 @@ def signOut() -> Response:
     return redirect(url_for("loginSite"))
 
 # Used to get messages, request arg: "limitNum" (the max number of messages to get)
-@app.route("/getMessages", methods=["GET"])
-def getMessages() -> str:
+@app.route("/getMessages/<int:roomID>", methods=["GET"])
+def getMessages(roomID) -> str:
     
     # Connect to the database 
     conn = sqlite3.connect('databases/database.db')
 
     # Get the last messages sent, but only a spesific amount specified by request args
     c = conn.cursor()
-    c.execute('SELECT messageID, message, timeSent, username, color, imagePath, messages.userID FROM messages INNER JOIN users on messages.userID = users.userID ORDER BY messageID DESC LIMIT ?', (request.args.get("limitNum"),))
+    c.execute('SELECT messageID, message, timeSent, username, color, imagePath, messages.userID FROM messages INNER JOIN users on messages.userID = users.userID WHERE roomID = ? ORDER BY messageID DESC LIMIT ?', (roomID, request.args.get("limitNum"),))
 
     # Get a list of all the messages then close the database
     messages = c.fetchall()

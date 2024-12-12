@@ -18,6 +18,11 @@
 {% block content %}
 
 <div class="d-flex flex-column flex-shrink-0" style="width: 4.5rem;">
+    <div class="serverList d-flex gap-2 align-items-center p-3 flex-column">
+        {% for server in serverList %}
+            <button class="btn btn-secondary btn-lg" onclick="changeServer({{ server[0] }})" style="aspect-ratio: 1/1;">{{ server[1][0] }}</button>
+        {% endfor %}
+    </div>
     <div class="dropdown border-top mt-auto">
         <a href="/" class="d-flex gap-2 align-items-center justify-content-center p-3 link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
             <img src="{{ url_for('static', filename='assets/logo.png') }}" width="36" height="36" class="rounded-circle">
@@ -42,6 +47,7 @@
         <form action="/sendMessage" method="post" onsubmit="ping()">
             <input name="message" type="text" class="form-control message-input" placeholder="Send a message" autocomplete="off" maxlength="300" required>
             <input type="hidden" name="userID" value="{{ userID }}">
+            <input type="hidden" name="roomID" value="{{ roomID }}">
         </form>
     </div>
 </div>

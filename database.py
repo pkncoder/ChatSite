@@ -47,4 +47,12 @@ def runCommand(command):
 
 
 if __name__ == "__main__":
-    pass
+    conn = sqlite3.connect(f'databases/database.db')
+    c = conn.cursor()
+    c.execute("SELECT userID FROM users")
+
+    for user in c.fetchall():
+        c.execute("INSERT INTO roomUser VALUES (?, ?)", (1, user[0]))
+
+    conn.commit()
+    conn.close()
