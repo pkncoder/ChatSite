@@ -49,14 +49,29 @@ def index() -> Response:
         conn = sqlite3.connect('databases/database.db')
         c = conn.cursor()
 
-        c.execute('''SELECT 
-                roomUser.roomID, chatRooms.roomName
-                  FROM roomUser
-                  INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID
-                  WHERE userID = ?
-                ''', (request.cookies.get('userID'),)
-        )
-        serverList = c.fetchall()
+        c.execute("SELECT username FROM users WHERE userID = ?", (request.cookies.get('userID'),))
+        username = c.fetchall()[0][0]
+
+
+        c.execute("SELECT roomID FROM roomUser WHERE userID = ?", (request.cookies.get('userID'),))
+
+        dmList = []
+        for room in c.fetchall():
+            c.execute('''SELECT roomUser.roomID, chatRooms.isDM, users.userID, users.username 
+                            FROM ((roomUser 
+                                INNER JOIN users ON roomUser.userID = users.userID)
+                                INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID)
+                            WHERE roomUser.roomID = ? AND chatRooms.isDM = 1 AND NOT roomUser.userID = ?;'''      
+            , (room[0],request.cookies.get('userID'),))
+
+            dmList += c.fetchall()
+
+        c.execute('''SELECT chatRooms.roomID, chatRooms.roomName , roomUser.userID
+                        FROM chatRooms
+                            INNER JOIN roomUser ON chatRooms.roomID = roomUser.roomID
+                        WHERE roomUser.userID = ? AND chatRooms.isDM = 0;''',
+        (request.cookies.get('userID'),))
+        roomList = c.fetchall()
 
         c.close()
 
@@ -66,7 +81,7 @@ def index() -> Response:
             roomID = 1
             
         finalResponse = make_response(
-            render_template('index.html', userID=request.cookies.get('userID'), serverList=serverList, roomID=roomID)
+            render_template('index.html', userID=request.cookies.get('userID'), username=username, roomList=roomList, dmList=dmList, roomID=roomID)
         )
 
         if not request.cookies.get('roomID'):
@@ -85,14 +100,15 @@ def users() -> Response:
         c.execute('SELECT * FROM users')
         users = c.fetchall()
 
-        c.execute('SELECT * FROM chatRooms')
+        c.execute('SELECT * FROM chatRooms WHERE isDM = 0')
         servers = c.fetchall()
 
         c.execute('''SELECT 
                 roomUser.roomID, chatRooms.roomName, users.username, roomUser.userID
                   FROM ((roomUser
                   INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID)
-                  INNER JOIN users ON roomUser.userID = users.userID) 
+                  INNER JOIN users ON roomUser.userID = users.userID)
+                  WHERE NOT roomName = "dmRoom"
                 '''
         )
         userRoomCombos = c.fetchall()
@@ -121,7 +137,7 @@ def addRoom() -> Response:
 
     conn = sqlite3.connect('databases/database.db')
     c = conn.cursor()
-    c.execute("INSERT INTO chatRooms (roomName) VALUES (?)", (roomName,))
+    c.execute("INSERT INTO chatRooms (roomName, isDM) VALUES (?,?)", (roomName,0,))
     conn.commit()
     conn.close()
 
@@ -293,14 +309,17 @@ def setAllSiteCookies(value: str, timeout = None) -> Response:
     # /
     response = redirect(url_for('index'))
     response.set_cookie('userID', value, max_age=timeout)
+    response.set_cookie('roomID', value, max_age=timeout)
 
     # /user
     userSite = redirect(url_for("users"))
     userSite.set_cookie('userID', value, max_age=timeout)
+    userSite.set_cookie('roomID', value, max_age=timeout)
 
     # /profile
     profileSite = redirect(url_for("profile"))
     profileSite.set_cookie('userID', value, max_age=timeout)
+    profileSite.set_cookie('roomID', value, max_age=timeout)
 
     return response
 

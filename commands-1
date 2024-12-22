@@ -1,0 +1,20 @@
+-- database: /Users/27prestona/code/ChatSite/databases/database.db
+SELECT roomID FROM roomUser WHERE userID = 1;
+
+SELECT roomUser.roomID, roomUser.userID, username FROM ((roomUser 
+    INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID)
+    INNER JOIN users ON roomUser.userID = users.userID)
+    WHERE NOT roomUser.userID = 1 AND 
+        chatRooms.isDM = 1 AND
+        chatRooms.roomID = 6;
+
+SELECT 
+    roomUser.roomID, chatRooms.roomName, chatRooms.isDM, users.username, users.color
+        FROM ((roomUser
+        INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID)
+        INNER JOIN users ON 2 = users.userID)
+        WHERE roomUser.userID = 1;
+
+SELECT * FROM roomUser WHERE roomID = 15;
+
+SELECT * FROM users

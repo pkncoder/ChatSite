@@ -153,3 +153,12 @@ function getCookie(cname) {
     }
     return "";
 }
+
+function showDms() {
+
+    if ($("#dms")[0].style.width === "0rem") {
+        $("#dms")[0].style.width = "20rem"
+    } else {
+        $("#dms")[0].style.width = "0rem"
+    }
+}
