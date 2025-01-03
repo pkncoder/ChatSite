@@ -168,7 +168,7 @@ def delete_room_user(room_id, user_id) -> Response:
 
 @app.route("/login")
 def loginSite() -> Response:
-    return render_template("login.html")
+    return make_response(render_template("login.html"))
 
 @app.route("/profile")
 def profile() -> Response:
@@ -268,8 +268,12 @@ def checkAuth() -> Response:
         if user[1] == username:
             if user[2] == password:
 
+                # Set the stuffs
+                login = setAllSiteCookies(str(user[0]))
+                login.set_cookie("roomID", '1')
+
                 # Set the neccisarry cookies and return the final value
-                return setAllSiteCookies(str(user[0]))
+                return login
             
             # If the password is wrong for the unique user, break out of the loop
             else:
