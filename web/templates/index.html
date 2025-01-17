@@ -17,14 +17,14 @@
 
 {% block content %}
 
-<div class="d-flex flex-column flex-shrink-0" style="width: 4.5rem; max-height: 100vh;">
+<div class="d-flex flex-column flex-shrink-0 serverListTop" style="width: 4.5rem; max-height: 100vh;">
     <div class="serverList d-flex gap-2 align-items-center p-3 flex-column-reverse" style="overflow-x: hidden;">
         
         {% for room in roomList %}
-            <button class="btn btn-secondary btn-lg" onclick="changeServer({{ room[0] }})" style="aspect-ratio: 1/1;">{{ room[1][0] }}</button>    
+            <button class="btn bg-room btn-lg" onclick="changeServer({{ room[0] }})" style="aspect-ratio: 1/1; width: 50px;">{{ room[1][0] }}</button>    
         {% endfor %}
 
-        <button class="btn btn-secondary" onclick="showDms()" style="aspect-ratio: 1/1;">DM</button>
+        <button class="btn bg-room" onclick="showDms()" style="aspect-ratio: 1/1;">DM</button>
     </div>
     <div class="dropdown border-top mt-auto">
         <a href="/" class="d-flex gap-2 align-items-center justify-content-center p-3 link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
@@ -39,24 +39,31 @@
     </div>
 </div>
 
-<div class="d-flex flex-column gap-1" style="width: 0rem; max-height: 100vh; background-color: rgb(31, 31, 31);" id="dms">
+<div class="d-flex flex-column pt-3 gap-1" style="width: 0rem; max-height: 100vh; background-color: rgb(41, 41, 41);" id="dms">
     {% for dm in dmList %}
-        <button class="btn btn-secondary w-100" onclick="changeServer({{ dm[0] }})">{{ dm[3] }}</button>    
+        <button class="btn w-100 dmListUser" onclick="changeServer({{ dm[0] }})">
+            <div class="container-fluid text-start">
+                <img src="{{ url_for('static', filename=dm[4]) }}" width="24" height="24" class="rounded-circle">
+                {{ dm[3] }}
+            </div>
+        </button>    
     {% endfor %}
 </div>
 
-<div class="container-fluid d-flex align-items-start flex-column p-2 top" id="messagesTop" style="overflow-y: scroll;">
-    <div class="container-fluid p-2 w-100">
-        <div class="container-fluid text-start d-flex flex-column-reverse h-100 w-100 m-0 align-items-center" id="messagesContainer">
-            
+<div class="container-fluid d-flex flex-column vh-100 px-0">
+    <div class="container-fluid d-flex align-items-start flex-column top" id="messagesTop" style="overflow-y: scroll;">
+        <div class="container-fluid w-100 p-0 ">
+            <div class="container-fluid text-start d-flex flex-column-reverse h-100 w-100 m-0 align-items-center messagesBoxTop p-0 " id="messagesContainer">
+                
+            </div>
         </div>
     </div>
 
-    <div class="container-fluid mt-auto p-2 w-100">
+    <div class="container-fluid px-3 pb-3 bottom-0 vw-30" style="background-color: rgb(51, 51, 51);">
         <form action="/sendMessage" method="post" onsubmit="ping()">
             <input name="message" type="text" class="form-control message-input" placeholder="Send a message" autocomplete="off" maxlength="300" required>
-            <input type="hidden" name="userID" value="{{ userID }}">
-            <input type="hidden" name="roomID" value="{{ roomID }}">
+            <input type="hidden" name="userID" value="{{ userID }}" required>
+            <input type="hidden" name="roomID" value="{{ roomID }}" required>
         </form>
     </div>
 </div>

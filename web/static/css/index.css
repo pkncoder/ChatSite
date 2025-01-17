@@ -20,3 +20,24 @@
         }
     }
 }
+
+.dmListUser {
+    background-color: rgb(41, 41, 41) !important;
+
+    &:hover {
+        background-color: rgb(53, 53, 53) !important;
+
+        transform: scale(1.05);
+        box-shadow: 0px 0px 10px white;
+
+        transition-duration: 0.1s;
+    }
+}
+
+.serverListTop {
+    background-color: rgb(36, 36, 36) !important;
+}
+
+.bg-room {
+    background-color: rgb(60, 60, 60) !important;
+}

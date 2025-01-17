@@ -57,7 +57,7 @@ def index() -> Response:
 
         dmList = []
         for room in c.fetchall():
-            c.execute('''SELECT roomUser.roomID, chatRooms.isDM, users.userID, users.username 
+            c.execute('''SELECT roomUser.roomID, chatRooms.isDM, users.userID, users.username, users.imagePath 
                             FROM ((roomUser 
                                 INNER JOIN users ON roomUser.userID = users.userID)
                                 INNER JOIN chatRooms ON roomUser.roomID = chatRooms.roomID)

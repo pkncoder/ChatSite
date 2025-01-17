@@ -80,23 +80,23 @@ function dealWithMessages(response) {
                 </div>
                 <span class="h2 h-100" style="color: ${response[messageIndex][4]}; overflow-wrap: anywhere;">${response[messageIndex][1]}</span>
             </div>
+            <div class="d-flex p-0 rounded" style="background-color: rgb(60, 60, 60)">
         `;
-
         if (`${response[messageIndex][6]}` === getCookie("userID")) {
             messageDiv += `<div class="rename" id="${response[messageIndex[0]]}">
-                <button class="btn" onclick="editMessage('${response[messageIndex][0]}')"><i class="fa fa-refresh" style="font-size:48px;color:light-blue"></i></button>
+                <button class="btn" onclick="editMessage('${response[messageIndex][0]}')"><i class="fa fa-refresh" style="font-size:24px;"></i></button>
             </div>`
         }
 
         if (getCookie("userID") == "1" || (`${response[messageIndex][6]}` === getCookie("userID"))) {
             messageDiv += `<div class="delete">
                 <form action="/removeMessage/${response[messageIndex][0]}" method="get" onsubmit="ping()">
-                    <button class="btn"><i class="fa fa-trash-o" style="font-size:48px;color:red"></i></button>
+                    <button class="btn"><i class="fa fa-trash-o" style="font-size:24px;color:red"></i></button>
                 </form>
             </div>`
         }
 
-        messageDiv += "</div>"
+        messageDiv += "</div>\n</div>"
 
         // Append the message to the message div
         messageContainer.append(messageDiv);
