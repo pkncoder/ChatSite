@@ -40,4 +40,6 @@
 
 .bg-room {
     background-color: rgb(60, 60, 60) !important;
+    aspect-ratio: 1/1; 
+    width: 50px;
 }

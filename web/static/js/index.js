@@ -80,7 +80,7 @@ function dealWithMessages(response) {
                 </div>
                 <span class="h2 h-100" style="color: ${response[messageIndex][4]}; overflow-wrap: anywhere;">${response[messageIndex][1]}</span>
             </div>
-            <div class="d-flex p-0 rounded" style="background-color: rgb(60, 60, 60)">
+            <div class="d-flex p-0 rounded" style="background-color: rgb(60, 60, 60);">
         `;
         if (`${response[messageIndex][6]}` === getCookie("userID")) {
             messageDiv += `<div class="rename" id="${response[messageIndex[0]]}">

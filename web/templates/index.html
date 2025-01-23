@@ -18,7 +18,10 @@
 {% block content %}
 
 <div class="d-flex flex-column flex-shrink-0 serverListTop" style="width: 4.5rem; max-height: 100vh;">
-    <div class="serverList d-flex gap-2 align-items-center p-3 flex-column-reverse" style="overflow-x: hidden;">
+    <div class="serverList d-flex gap-2 align-items-center p-3 flex-column-reverse h-100" style="overflow-x: hidden;">
+        
+        <!-- <button class="btn bg-room mt-auto" onclick="addRoom()" style="aspect-ratio: 1/1; font-size: 20px;">+</button> -->
+        <div class="mt-auto"></div>
         
         {% for room in roomList %}
             <button class="btn bg-room btn-lg" onclick="changeServer({{ room[0] }})" style="aspect-ratio: 1/1; width: 50px;">{{ room[1][0] }}</button>    
