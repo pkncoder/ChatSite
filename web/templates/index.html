@@ -42,9 +42,9 @@
     </div>
 </div>
 
-<div class="d-flex flex-column pt-3 gap-1" style="width: 0rem; max-height: 100vh; background-color: rgb(41, 41, 41);" id="dms">
+<div class="d-flex flex-column pt-3 gap-1" style="width: 0rem; max-height: 100vh; background-color: rgb(41, 41, 41); overflow-y: hidden;" id="dms">
     {% for dm in dmList %}
-        <button class="btn w-100 dmListUser" onclick="changeServer({{ dm[0] }})">
+        <button class="btn w-100 dmListUser newMessage" onclick="changeServer({{ dm[0] }})">
             <div class="container-fluid text-start">
                 <img src="{{ url_for('static', filename=dm[4]) }}" width="24" height="24" class="rounded-circle">
                 {{ dm[3] }}
